@@ -1,0 +1,27 @@
+{
+  "name": "snow-forecast-app",
+  "version": "1.0.0",
+  "description": "Moderní webová aplikace pro sledování 14denní předpovědi sněžení s upozorněními a vizualizacemi",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000 || python3 -m http.server 8000",
+    "dev": "npx http-server -p 8000 -o",
+    "test": "echo \"No tests configured yet\" && exit 0"
+  },
+  "keywords": [
+    "weather",
+    "snow",
+    "forecast",
+    "ski",
+    "winter",
+    "meteo"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/franz-boot/weatherapp"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}
