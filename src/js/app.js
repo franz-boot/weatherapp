@@ -143,51 +143,180 @@ function t(key) {
 }
 
 // ========================================
-// SNOW ANIMATION
+// REALISTIC SNOW ANIMATION
 // ========================================
 const canvas = document.getElementById('snowCanvas');
 const ctx = canvas.getContext('2d');
-let snowflakes = [];
+
+// Configuration for 3 depth layers
+const snowConfig = {
+    layers: [
+        { count: 50, sizeMin: 5, sizeMax: 10, speedMin: 0.6, speedMax: 1.2, opacity: 0.95 },  // Close/large
+        { count: 100, sizeMin: 2.5, sizeMax: 5, speedMin: 1, speedMax: 2, opacity: 0.7 },     // Medium
+        { count: 180, sizeMin: 1, sizeMax: 2.5, speedMin: 1.5, speedMax: 3, opacity: 0.4 }    // Far/small
+    ]
+};
+
+let snowLayers = [];
+let wind = 0;
+let targetWind = 0;
+let time = 0;
 
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 }
 
-function createSnowflakes() {
-    const count = Math.floor(window.innerWidth / 10);
-    snowflakes = [];
-    for (let i = 0; i < count; i++) {
-        snowflakes.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            radius: Math.random() * 3 + 1,
-            speed: Math.random() * 1 + 0.5,
-            wind: Math.random() * 0.5 - 0.25,
-            opacity: Math.random() * 0.6 + 0.4
-        });
+// Draw crystal snowflake
+function drawCrystal(x, y, size, opacity, rotation) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rotation);
+    ctx.globalAlpha = opacity;
+    ctx.strokeStyle = 'white';
+    ctx.lineCap = 'round';
+    ctx.lineWidth = Math.max(1, size * 0.12);
+
+    for (let i = 0; i < 6; i++) {
+        ctx.save();
+        ctx.rotate((i * Math.PI) / 3);
+
+        // Main arm
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, -size);
+        ctx.stroke();
+
+        // Branches
+        const b1 = size * 0.55, b2 = size * 0.8;
+        ctx.beginPath();
+        ctx.moveTo(0, -b1);
+        ctx.lineTo(-size * 0.25, -b1 - size * 0.2);
+        ctx.moveTo(0, -b1);
+        ctx.lineTo(size * 0.25, -b1 - size * 0.2);
+        ctx.moveTo(0, -b2);
+        ctx.lineTo(-size * 0.15, -b2 - size * 0.12);
+        ctx.moveTo(0, -b2);
+        ctx.lineTo(size * 0.15, -b2 - size * 0.12);
+        ctx.stroke();
+
+        ctx.restore();
     }
+    ctx.restore();
+}
+
+// Draw simple star
+function drawStar(x, y, size, opacity, rotation) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rotation);
+    ctx.globalAlpha = opacity;
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = Math.max(0.8, size * 0.15);
+    ctx.lineCap = 'round';
+
+    for (let i = 0; i < 6; i++) {
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, -size);
+        ctx.stroke();
+        ctx.rotate(Math.PI / 3);
+    }
+    ctx.restore();
+}
+
+// Draw soft dot with glow
+function drawDot(x, y, size, opacity) {
+    const gradient = ctx.createRadialGradient(x, y, 0, x, y, size);
+    gradient.addColorStop(0, `rgba(255, 255, 255, ${opacity})`);
+    gradient.addColorStop(0.5, `rgba(255, 255, 255, ${opacity * 0.5})`);
+    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(x, y, size, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function createFlake(layer, index) {
+    const cfg = snowConfig.layers[index];
+    return {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: cfg.sizeMin + Math.random() * (cfg.sizeMax - cfg.sizeMin),
+        speed: cfg.speedMin + Math.random() * (cfg.speedMax - cfg.speedMin),
+        opacity: cfg.opacity * (0.7 + Math.random() * 0.3),
+        rotation: Math.random() * Math.PI * 2,
+        rotationSpeed: (Math.random() - 0.5) * 0.015,
+        swayOffset: Math.random() * Math.PI * 2,
+        swaySpeed: 0.3 + Math.random() * 0.4,
+        wobble: 0.5 + Math.random() * 1
+    };
+}
+
+function createSnowLayers() {
+    snowLayers = [];
+    const scale = Math.min(1.5, canvas.width / 1200);
+
+    snowConfig.layers.forEach((cfg, i) => {
+        const particles = [];
+        const count = Math.max(20, Math.floor(cfg.count * scale));
+        for (let j = 0; j < count; j++) {
+            particles.push(createFlake(cfg, i));
+        }
+        snowLayers.push(particles);
+    });
 }
 
 function animateSnow() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    snowflakes.forEach(flake => {
-        ctx.beginPath();
-        ctx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${flake.opacity})`;
-        ctx.fill();
-        flake.y += flake.speed;
-        flake.x += flake.wind + Math.sin(flake.y * 0.01) * 0.5;
-        if (flake.y > canvas.height) { flake.y = -5; flake.x = Math.random() * canvas.width; }
-        if (flake.x > canvas.width) flake.x = 0;
-        if (flake.x < 0) flake.x = canvas.width;
-    });
+    time += 0.016;
+
+    // Evolve wind naturally
+    if (Math.random() < 0.003) targetWind = (Math.random() - 0.5) * 1.5;
+    wind += (targetWind - wind) * 0.008;
+
+    // Draw back to front
+    for (let i = snowLayers.length - 1; i >= 0; i--) {
+        const layer = snowLayers[i];
+        const windFactor = 1 - i * 0.35;
+        const swayAmp = [1.8, 1.2, 0.6][i];
+
+        layer.forEach((f, idx) => {
+            // Physics
+            const sway = Math.sin(time * f.swaySpeed + f.swayOffset) * swayAmp * f.wobble;
+            const turbulence = Math.sin(time * 1.5 + f.x * 0.01) * 0.2;
+
+            f.y += f.speed;
+            f.x += sway + turbulence + wind * windFactor * f.size * 0.15;
+            f.rotation += f.rotationSpeed;
+
+            // Draw based on layer
+            if (i === 0) drawCrystal(f.x, f.y, f.size, f.opacity, f.rotation);
+            else if (i === 1) drawStar(f.x, f.y, f.size, f.opacity, f.rotation);
+            else drawDot(f.x, f.y, f.size, f.opacity);
+
+            // Reset when off screen
+            if (f.y > canvas.height + f.size * 2) {
+                layer[idx] = createFlake(null, i);
+                layer[idx].y = -f.size * 2;
+            }
+            if (f.x > canvas.width + f.size * 2) f.x = -f.size;
+            else if (f.x < -f.size * 2) f.x = canvas.width + f.size;
+        });
+    }
+
     requestAnimationFrame(animateSnow);
 }
 
-window.addEventListener('resize', () => { resizeCanvas(); createSnowflakes(); });
+// Mouse adds subtle wind influence
+document.addEventListener('mousemove', e => {
+    targetWind += (e.clientX - canvas.width / 2) / canvas.width * 0.05;
+    targetWind = Math.max(-2, Math.min(2, targetWind));
+});
+
+window.addEventListener('resize', () => { resizeCanvas(); createSnowLayers(); });
 resizeCanvas();
-createSnowflakes();
+createSnowLayers();
 animateSnow();
 
 // ========================================

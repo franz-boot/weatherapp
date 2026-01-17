@@ -53,6 +53,7 @@ body {
     height: 100%;
     pointer-events: none;
     z-index: 0;
+    filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.4));
 }
 
 /* Language Switcher */
