@@ -8,6 +8,7 @@ a projekt dodržuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [1.0.0] - 2026-01-02
 
 ### Přidáno
+
 - ✨ Iniciální import aplikace Snow Forecast
 - 📍 Vyhledávání míst s inteligentním autocomplete
 - 🌍 Podpora geolokace pro automatickou detekci polohy
@@ -24,6 +25,7 @@ a projekt dodržuje [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - 📋 CHANGELOG pro sledování změn
 
 ### Technické detaily
+
 - Použito Open-Meteo API pro weather data
 - Použito Open-Meteo Geocoding API pro vyhledávání měst
 - Chart.js pro vizualizace
