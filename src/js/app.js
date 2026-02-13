@@ -10,8 +10,6 @@ const translations = {
         search: 'Hledat',
         myLocation: 'Moje poloha',
         selectedLocation: 'Vybrané místo',
-        locationMap: 'Lokalita na mapě',
-        openMap: 'Otevřít mapu',
         forecast14days: '14denní předpověď',
         loading: 'Načítání',
         snowAccumulation: 'Akumulace sněhu',
@@ -54,8 +52,6 @@ const translations = {
         search: 'Suchen',
         myLocation: 'Mein Standort',
         selectedLocation: 'Ausgewählter Ort',
-        locationMap: 'Standort auf der Karte',
-        openMap: 'Karte öffnen',
         forecast14days: '14-Tage-Vorhersage',
         loading: 'Laden',
         snowAccumulation: 'Schneeakkumulation',
@@ -97,8 +93,6 @@ let currentForecast = null;
 let currentLocation = null;
 let snowChart = null;
 let autocompleteTimeout = null;
-let locationMap = null;
-let locationMarker = null;
 
 // ========================================
 // EMAIL CONFIG
@@ -146,67 +140,6 @@ function setLanguage(lang) {
 
 function t(key) {
     return translations[currentLang][key] || key;
-}
-
-function initLocationMap() {
-    if (locationMap || typeof L === 'undefined') return;
-
-    locationMap = L.map('locationMap', {
-        zoomControl: true
-    });
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(locationMap);
-}
-
-function updateLocationMap(lat, lon, name) {
-    const mapSection = document.getElementById('locationMapSection');
-    const mapLink = document.getElementById('locationMapLink');
-    if (!mapSection || !mapLink) return;
-
-    initLocationMap();
-    if (!locationMap) return;
-
-    mapSection.classList.remove('hidden');
-
-    if (!locationMarker) {
-        locationMarker = L.marker([lat, lon]).addTo(locationMap);
-    } else {
-        locationMarker.setLatLng([lat, lon]);
-    }
-
-    if (name) {
-        locationMarker.bindPopup(name);
-    }
-
-    locationMap.setView([lat, lon], 10);
-    mapLink.href = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=10/${lat}/${lon}`;
-
-    requestAnimationFrame(() => locationMap.invalidateSize());
-}
-
-function normalizeDailyData(daily) {
-    const time = Array.isArray(daily?.time) ? daily.time : [];
-    const length = time.length;
-
-    const toSizedArray = (values, fallback = 0) => {
-        if (Array.isArray(values)) {
-            if (values.length >= length) return values.slice(0, length);
-            return values.concat(Array.from({ length: length - values.length }, () => fallback));
-        }
-        return Array.from({ length }, () => fallback);
-    };
-
-    return {
-        time,
-        snowfall_sum: toSizedArray(daily?.snowfall_sum, 0),
-        precipitation_probability_max: toSizedArray(daily?.precipitation_probability_max, 0),
-        temperature_2m_max: toSizedArray(daily?.temperature_2m_max, 0),
-        temperature_2m_min: toSizedArray(daily?.temperature_2m_min, 0),
-        weathercode: toSizedArray(Array.isArray(daily?.weather_code) ? daily.weather_code : daily?.weathercode, 0)
-    };
 }
 
 // ========================================
@@ -515,20 +448,16 @@ async function fetchForecast(lat, lon) {
 
     try {
         const response = await fetch(
-            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=snowfall_sum,precipitation_probability_max,temperature_2m_max,temperature_2m_min,weather_code&timezone=auto&forecast_days=14`
+            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=snowfall_sum,precipitation_probability_max,temperature_2m_max,temperature_2m_min,weathercode&timezone=auto&forecast_days=14`
         );
-        if (!response.ok) throw new Error(`Forecast request failed: ${response.status}`);
         const data = await response.json();
-        const daily = normalizeDailyData(data.daily);
-        if (daily.time.length === 0) throw new Error('Missing daily forecast data');
 
-        currentForecast = daily;
+        currentForecast = data.daily;
         document.getElementById('locationName').textContent = currentLocation.name;
         document.getElementById('currentLocation').classList.add('active');
-        updateLocationMap(lat, lon, currentLocation.name);
 
-        renderForecast(daily);
-        renderChart(daily);
+        renderForecast(data.daily);
+        renderChart(data.daily);
 
         document.getElementById('alertCard').classList.remove('hidden');
         document.getElementById('shareSection').classList.remove('hidden');
@@ -755,13 +684,9 @@ function showToast(msg) {
 function toggleAlerts() { checkAlerts(); }
 
 function checkAlerts() {
-    const alertToggle = document.getElementById('alertToggle');
-    const thresholdInput = document.getElementById('threshold');
+    const enabled = document.getElementById('alertToggle').checked;
+    const threshold = parseFloat(document.getElementById('threshold').value) || 0;
     const banner = document.getElementById('alertBanner');
-    if (!alertToggle || !thresholdInput || !banner) return;
-
-    const enabled = alertToggle.checked;
-    const threshold = parseFloat(thresholdInput.value) || 0;
 
     if (!enabled || !currentForecast) { banner.classList.remove('active'); return; }
 

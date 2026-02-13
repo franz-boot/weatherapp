@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="cs">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,6 +20,7 @@
     <!-- Styles -->
     <link rel="stylesheet" href="src/css/style.css">
 </head>
+
 <body>
     <div class="winter-bg"></div>
     <div class="mountains">
@@ -43,7 +45,8 @@
         <div class="card search-card">
             <div class="card-title" data-i18n="searchLocation">Vyhledat místo</div>
             <div class="search-container">
-                <input type="text" class="search-input" id="cityInput" data-i18n-placeholder="searchPlaceholder" placeholder="Zadejte název města..." autocomplete="off"/>
+                <input type="text" class="search-input" id="cityInput" data-i18n-placeholder="searchPlaceholder"
+                    placeholder="Zadejte název města..." autocomplete="off" />
                 <div class="autocomplete-list" id="autocompleteList"></div>
             </div>
             <div class="search-buttons">
@@ -83,11 +86,17 @@
             <div class="share-section hidden" id="shareSection">
                 <div class="share-buttons">
                     <button class="share-btn native" onclick="nativeShare()">
-                        <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z" />
+                        </svg>
                         <span data-i18n="share">Sdílet</span>
                     </button>
                     <button class="share-btn copy" onclick="copyToClipboard()">
-                        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
+                        </svg>
                         <span data-i18n="copy">Kopírovat</span>
                     </button>
                 </div>
@@ -98,8 +107,8 @@
             <div class="card-title" data-i18n="snowAlerts">Upozornění na sníh</div>
 
             <div class="alert-toggle">
-                <label class="toggle">
-                    <input type="checkbox" id="alertToggle" onchange="toggleAlerts()">
+                <label class="toggle" for="alertToggle">
+
                     <span class="slider"></span>
                 </label>
                 <span data-i18n="enableAlerts">Povolit upozornění</span>
@@ -108,7 +117,8 @@
             <div class="threshold-section">
                 <label data-i18n="alertThreshold">Upozornit když sníh přesáhne:</label>
                 <div class="threshold-input">
-                    <input type="number" id="threshold" value="1" min="0" step="0.5" onchange="checkAlerts()">
+                    <input type="number" id="threshold" value="1" min="0" step="0.5" placeholder="1"
+                        onchange="checkAlerts()">
                     <span>cm</span>
                 </div>
             </div>
@@ -116,7 +126,8 @@
             <div class="email-section">
                 <h4 data-i18n="emailNotifications">E-mailová upozornění</h4>
                 <div class="email-input">
-                    <input type="email" id="emailAddress" data-i18n-placeholder="emailPlaceholder" placeholder="vas@email.cz" />
+                    <input type="email" id="emailAddress" data-i18n-placeholder="emailPlaceholder"
+                        placeholder="vas@email.cz" />
                     <button class="btn btn-small" onclick="sendEmailAlert()" data-i18n="send">Odeslat</button>
                 </div>
                 <div class="email-status" id="emailStatus"></div>
@@ -134,4 +145,5 @@
     <!-- Application Script -->
     <script src="src/js/app.js"></script>
 </body>
+
 </html>
