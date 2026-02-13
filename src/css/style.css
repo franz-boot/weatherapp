@@ -203,7 +203,14 @@ body {
 }
 
 /* Cards */
-
+.card {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 20px;
+}
 
 .card-title {
     color: white;
@@ -459,25 +466,7 @@ body {
     height: 220px;
 }
 
-.total-snow {
-    text-align: center;
-    margin-top: 12px;
-    padding: 14px;
-    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-    border-radius: 12px;
-    color: white;
-}
-
-.total-snow .label {
-    font-size: 12px;
-    opacity: 0.9;
-}
-
-.total-snow .value {
-    font-size: 1.6rem;
-    font-weight: 700;
-    display: block;
-}
+/* (total-snow replaced by total-snow-summary) */
 
 /* Share */
 .share-section {
@@ -723,6 +712,88 @@ input:checked + .slider:before {
 .toast.show {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
+}
+
+/* Location Map */
+.location-map {
+    margin-top: 16px;
+}
+
+.map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 600;
+}
+
+.map-header a {
+    color: #93c5fd;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.map-header a:hover {
+    color: #bfdbfe;
+    text-decoration: underline;
+}
+
+#locationMap {
+    width: 100%;
+    height: 200px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Total Snow Summary */
+.total-snow-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.total-snow-stat {
+    text-align: center;
+    padding: 12px 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.total-snow-stat .stat-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: white;
+    display: block;
+    line-height: 1.2;
+}
+
+.total-snow-stat .stat-label {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+    display: block;
+}
+
+.total-snow-stat.highlight {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(139, 92, 246, 0.3));
+    border-color: rgba(99, 102, 241, 0.4);
+}
+
+.total-snow-stat.highlight .stat-value {
+    background: linear-gradient(135deg, #93c5fd, #c4b5fd);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 1.6rem;
 }
 
 .hidden { display: none !important; }

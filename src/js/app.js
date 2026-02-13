@@ -41,6 +41,10 @@ const translations = {
         dailySnow: 'Denní sníh (cm)',
         cumulative: 'Kumulativní (cm)',
         confidencePercent: 'Spolehlivost (%)',
+        snowDays: 'Dní se sněhem',
+        maxSnow: 'Max za den',
+        locationMap: 'Lokalita na mapě',
+        openMap: 'Otevřít mapu',
         days: ['Ne', 'Po', 'Út', 'St', 'Čt', 'Pá', 'So'],
         months: ['Led', 'Úno', 'Bře', 'Dub', 'Kvě', 'Čvn', 'Čvc', 'Srp', 'Zář', 'Říj', 'Lis', 'Pro']
     },
@@ -83,6 +87,10 @@ const translations = {
         dailySnow: 'Täglicher Schnee (cm)',
         cumulative: 'Kumulativ (cm)',
         confidencePercent: 'Zuverlässigkeit (%)',
+        snowDays: 'Schneetage',
+        maxSnow: 'Max pro Tag',
+        locationMap: 'Standort auf der Karte',
+        openMap: 'Karte öffnen',
         days: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
         months: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez']
     }
@@ -92,6 +100,8 @@ let currentLang = 'cs';
 let currentForecast = null;
 let currentLocation = null;
 let snowChart = null;
+let locationMap = null;
+let locationMarker = null;
 let autocompleteTimeout = null;
 
 // ========================================
@@ -456,6 +466,8 @@ async function fetchForecast(lat, lon) {
         document.getElementById('locationName').textContent = currentLocation.name;
         document.getElementById('currentLocation').classList.add('active');
 
+        updateLocationMap(lat, lon, currentLocation.name);
+
         renderForecast(data.daily);
         renderChart(data.daily);
 
@@ -547,7 +559,12 @@ function renderChart(daily) {
         confidenceData.push(confidence);
     }
 
+    const snowDaysCount = dailySnow.filter(s => s > 0).length;
+    const maxSnow = Math.max(...dailySnow);
+
     document.getElementById('totalSnow').textContent = `${total.toFixed(1)} cm`;
+    document.getElementById('snowDaysCount').textContent = snowDaysCount;
+    document.getElementById('maxSnowDay').textContent = `${maxSnow.toFixed(1)} cm`;
     document.getElementById('chartContainer').classList.remove('hidden');
 
     const ctx = document.getElementById('snowChart').getContext('2d');
@@ -626,6 +643,33 @@ function renderChart(daily) {
             }
         }
     });
+}
+
+// ========================================
+// LOCATION MAP
+// ========================================
+function updateLocationMap(lat, lon, name) {
+    const mapSection = document.getElementById('locationMapSection');
+    const mapLink = document.getElementById('locationMapLink');
+    mapSection.classList.remove('hidden');
+    mapLink.href = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=12/${lat}/${lon}`;
+
+    if (!locationMap) {
+        locationMap = L.map('locationMap', {
+            zoomControl: false,
+            attributionControl: false
+        }).setView([lat, lon], 11);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18
+        }).addTo(locationMap);
+        locationMarker = L.marker([lat, lon]).addTo(locationMap);
+    } else {
+        locationMap.setView([lat, lon], 11);
+        locationMarker.setLatLng([lat, lon]);
+    }
+
+    // Fix tile rendering after container becomes visible
+    setTimeout(() => locationMap.invalidateSize(), 100);
 }
 
 // ========================================

@@ -77,9 +77,19 @@
                 <div class="chart-wrapper">
                     <canvas id="snowChart"></canvas>
                 </div>
-                <div class="total-snow">
-                    <span class="label" data-i18n="total14days">Celkem za 14 dní</span>
-                    <span class="value" id="totalSnow">0 cm</span>
+                <div class="total-snow-summary" id="totalSnowSummary">
+                    <div class="total-snow-stat highlight">
+                        <span class="stat-value" id="totalSnow">0 cm</span>
+                        <span class="stat-label" data-i18n="total14days">Celkem za 14 dní</span>
+                    </div>
+                    <div class="total-snow-stat">
+                        <span class="stat-value" id="snowDaysCount">0</span>
+                        <span class="stat-label" data-i18n="snowDays">Dní se sněhem</span>
+                    </div>
+                    <div class="total-snow-stat">
+                        <span class="stat-value" id="maxSnowDay">0 cm</span>
+                        <span class="stat-label" data-i18n="maxSnow">Max za den</span>
+                    </div>
                 </div>
             </div>
 
@@ -108,7 +118,7 @@
 
             <div class="alert-toggle">
                 <label class="toggle" for="alertToggle">
-
+                    <input type="checkbox" id="alertToggle" onchange="toggleAlerts()">
                     <span class="slider"></span>
                 </label>
                 <span data-i18n="enableAlerts">Povolit upozornění</span>
