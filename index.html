@@ -8,6 +8,8 @@
     <!-- External Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -51,6 +53,13 @@
             <div class="current-location" id="currentLocation">
                 <div class="label" data-i18n="selectedLocation">Vybrané místo</div>
                 <div class="name" id="locationName"></div>
+            </div>
+            <div class="location-map hidden" id="locationMapSection">
+                <div class="map-header">
+                    <span data-i18n="locationMap">Lokalita na mapě</span>
+                    <a id="locationMapLink" href="#" target="_blank" rel="noopener" data-i18n="openMap">Otevřít mapu</a>
+                </div>
+                <div id="locationMap" aria-label="Mapa vybrané lokality"></div>
             </div>
         </div>
 
