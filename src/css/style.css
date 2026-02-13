@@ -17,7 +17,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(180deg, #0f172a 0%, #1e3a5f 30%, #3b82f6 70%, #93c5fd 100%);
+    background: linear-gradient(180deg, #070b14 0%, #0c1524 25%, #111d35 50%, #162544 75%, #1a2d50 100%);
     z-index: -2;
 }
 
@@ -40,10 +40,10 @@ body {
     opacity: 0.3;
 }
 
-.mountain-1 { left: -5%; border-width: 0 200px 300px 200px; border-color: transparent transparent #1e293b transparent; }
-.mountain-2 { left: 20%; border-width: 0 300px 400px 300px; border-color: transparent transparent #334155 transparent; }
-.mountain-3 { left: 50%; border-width: 0 250px 350px 250px; border-color: transparent transparent #475569 transparent; }
-.mountain-4 { right: -10%; border-width: 0 280px 380px 280px; border-color: transparent transparent #1e293b transparent; }
+.mountain-1 { left: -5%; border-width: 0 200px 300px 200px; border-color: transparent transparent #0d1520 transparent; }
+.mountain-2 { left: 20%; border-width: 0 300px 400px 300px; border-color: transparent transparent #131e2e transparent; }
+.mountain-3 { left: 50%; border-width: 0 250px 350px 250px; border-color: transparent transparent #1a2840 transparent; }
+.mountain-4 { right: -10%; border-width: 0 280px 380px 280px; border-color: transparent transparent #0d1520 transparent; }
 
 #snowCanvas {
     position: fixed;
@@ -68,10 +68,10 @@ body {
 
 .lang-btn {
     padding: 8px 16px;
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    color: white;
+    color: rgba(255, 255, 255, 0.6);
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
@@ -79,11 +79,13 @@ body {
 }
 
 .lang-btn:hover, .lang-btn.active {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
 }
 
 .lang-btn.active {
-    border-color: white;
+    border-color: rgba(99, 102, 241, 0.6);
+    color: white;
 }
 
 /* Dashboard Container */
@@ -204,12 +206,13 @@ body {
 
 /* Cards */
 .card {
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 20px;
     padding: 20px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
 }
 
 .card-title {
@@ -230,18 +233,24 @@ body {
 .search-input {
     width: 100%;
     padding: 14px 18px;
-    background: rgba(255, 255, 255, 0.9);
-    border: 2px solid transparent;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     font-size: 15px;
     font-family: inherit;
+    color: white;
     transition: all 0.3s ease;
+}
+
+.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.35);
 }
 
 .search-input:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+    border-color: rgba(99, 102, 241, 0.5);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
 
 .autocomplete-list {
@@ -249,10 +258,11 @@ body {
     top: 100%;
     left: 0;
     right: 0;
-    background: white;
+    background: #1a2235;
     border-radius: 12px;
     margin-top: 8px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     max-height: 250px;
     overflow-y: auto;
     z-index: 50;
@@ -266,7 +276,7 @@ body {
 .autocomplete-item {
     padding: 12px 16px;
     cursor: pointer;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     transition: background 0.2s;
 }
 
@@ -275,17 +285,17 @@ body {
 }
 
 .autocomplete-item:hover {
-    background: #f0f9ff;
+    background: rgba(99, 102, 241, 0.15);
 }
 
 .autocomplete-item .city {
     font-weight: 600;
-    color: #1e293b;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .autocomplete-item .country {
     font-size: 13px;
-    color: #64748b;
+    color: rgba(255, 255, 255, 0.45);
 }
 
 .search-buttons {
@@ -297,7 +307,7 @@ body {
 .btn {
     flex: 1;
     padding: 12px 16px;
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
     color: white;
     border: none;
     border-radius: 10px;
@@ -310,11 +320,12 @@ body {
 
 .btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
 }
 
 .btn-secondary {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .btn-small {
@@ -326,7 +337,8 @@ body {
 .current-location {
     margin-top: 16px;
     padding: 12px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 10px;
     text-align: center;
     display: none;
@@ -361,24 +373,27 @@ body {
     display: flex;
     align-items: center;
     padding: 12px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 12px;
     transition: all 0.3s ease;
     gap: 12px;
 }
 
 .forecast-day:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .forecast-day.snow {
-    background: rgba(59, 130, 246, 0.3);
-    border-left: 3px solid #60a5fa;
+    background: rgba(99, 102, 241, 0.12);
+    border-left: 3px solid rgba(99, 102, 241, 0.6);
+    border-color: rgba(99, 102, 241, 0.15);
 }
 
 .forecast-day.heavy-snow {
-    background: rgba(99, 102, 241, 0.4);
-    border-left: 3px solid #818cf8;
+    background: rgba(139, 92, 246, 0.15);
+    border-left: 3px solid rgba(139, 92, 246, 0.7);
+    border-color: rgba(139, 92, 246, 0.2);
 }
 
 .day-name {
@@ -450,12 +465,13 @@ body {
 .chart-container {
     margin-top: 16px;
     padding: 16px;
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(15, 20, 35, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 16px;
 }
 
 .chart-container h3 {
-    color: #1e293b;
+    color: rgba(255, 255, 255, 0.85);
     margin-bottom: 12px;
     font-size: 0.95rem;
     font-weight: 600;
@@ -533,7 +549,7 @@ body {
     position: absolute;
     cursor: pointer;
     inset: 0;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
     transition: 0.3s;
     border-radius: 26px;
 }
@@ -551,7 +567,7 @@ body {
 }
 
 input:checked + .slider {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
 }
 
 input:checked + .slider:before {
@@ -561,7 +577,8 @@ input:checked + .slider:before {
 .threshold-section {
     margin-top: 16px;
     padding: 12px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 10px;
 }
 
@@ -581,12 +598,13 @@ input:checked + .slider:before {
 .threshold-input input {
     width: 70px;
     padding: 10px;
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     font-size: 14px;
     font-weight: 600;
     text-align: center;
+    color: white;
 }
 
 .threshold-input span {
@@ -615,10 +633,15 @@ input:checked + .slider:before {
 .email-input input {
     flex: 1;
     padding: 10px 14px;
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     font-size: 13px;
+    color: white;
+}
+
+.email-input input::placeholder {
+    color: rgba(255, 255, 255, 0.35);
 }
 
 .email-status {
@@ -698,7 +721,8 @@ input:checked + .slider:before {
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%) translateY(100px);
-    background: rgba(30, 41, 59, 0.95);
+    background: rgba(10, 15, 28, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
     padding: 12px 20px;
     border-radius: 10px;
@@ -752,48 +776,72 @@ input:checked + .slider:before {
 
 /* Total Snow Summary */
 .total-snow-summary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    padding: 20px 16px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(139, 92, 246, 0.08));
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 16px;
+}
+
+.total-snow-highlight {
+    text-align: center;
+}
+
+.total-snow-highlight .stat-value {
+    font-size: 2.4rem;
+    font-weight: 800;
+    display: block;
+    line-height: 1;
+    background: linear-gradient(135deg, #818cf8, #a78bfa, #c4b5fd);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.3));
+}
+
+.total-snow-highlight .stat-label {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 6px;
+    display: block;
+}
+
+.total-snow-details {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
-    margin-top: 12px;
+    width: 100%;
 }
 
 .total-snow-stat {
     text-align: center;
-    padding: 12px 8px;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px 8px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .total-snow-stat .stat-value {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: 700;
-    color: white;
+    color: rgba(255, 255, 255, 0.9);
     display: block;
     line-height: 1.2;
 }
 
 .total-snow-stat .stat-label {
     font-size: 10px;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.4);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-top: 4px;
     display: block;
-}
-
-.total-snow-stat.highlight {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(139, 92, 246, 0.3));
-    border-color: rgba(99, 102, 241, 0.4);
-}
-
-.total-snow-stat.highlight .stat-value {
-    background: linear-gradient(135deg, #93c5fd, #c4b5fd);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-size: 1.6rem;
 }
 
 .hidden { display: none !important; }

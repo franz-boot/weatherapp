@@ -578,18 +578,18 @@ function renderChart(daily) {
                 {
                     label: t('dailySnow'),
                     data: dailySnow,
-                    backgroundColor: 'rgba(59, 130, 246, 0.6)',
-                    borderColor: 'rgba(59, 130, 246, 1)',
+                    backgroundColor: 'rgba(99, 102, 241, 0.5)',
+                    borderColor: 'rgba(129, 140, 248, 0.9)',
                     borderWidth: 2,
-                    borderRadius: 4,
+                    borderRadius: 6,
                     order: 3
                 },
                 {
                     label: t('cumulative'),
                     data: cumulativeSnow,
                     type: 'line',
-                    borderColor: 'rgba(139, 92, 246, 1)',
-                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                    borderColor: 'rgba(167, 139, 250, 1)',
+                    backgroundColor: 'rgba(139, 92, 246, 0.08)',
                     borderWidth: 2,
                     fill: true,
                     tension: 0.4,
@@ -620,25 +620,25 @@ function renderChart(daily) {
                 y: {
                     beginAtZero: true,
                     position: 'left',
-                    grid: { color: 'rgba(0,0,0,0.05)' },
-                    ticks: { font: { size: 10 } }
+                    grid: { color: 'rgba(255,255,255,0.06)' },
+                    ticks: { font: { size: 10 }, color: 'rgba(255,255,255,0.5)' }
                 },
                 y1: {
                     beginAtZero: true,
                     max: 100,
                     position: 'right',
                     grid: { display: false },
-                    ticks: { font: { size: 10 }, callback: v => v + '%' }
+                    ticks: { font: { size: 10 }, color: 'rgba(255,255,255,0.5)', callback: v => v + '%' }
                 },
                 x: {
                     grid: { display: false },
-                    ticks: { font: { size: 9 }, maxRotation: 45, minRotation: 45 }
+                    ticks: { font: { size: 9 }, color: 'rgba(255,255,255,0.5)', maxRotation: 45, minRotation: 45 }
                 }
             },
             plugins: {
                 legend: {
                     position: 'top',
-                    labels: { usePointStyle: true, padding: 10, font: { size: 10 } }
+                    labels: { usePointStyle: true, padding: 10, font: { size: 10 }, color: 'rgba(255,255,255,0.7)' }
                 }
             }
         }
