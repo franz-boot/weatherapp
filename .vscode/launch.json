@@ -6,6 +6,7 @@
     "configurations": [
         
 
+
         {
             "name": "Debugger for Mainframe: INTERTEST™ FOR BATCH",
             "type": "intertest-batch",
