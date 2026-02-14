@@ -1,0 +1,29 @@
+{
+    // Pro informace o možných atributech použijte technologii IntelliSense.
+    // Umístěním ukazatele myši zobrazíte popisy existujících atributů.
+    // Další informace najdete tady: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        
+
+        {
+            "name": "Debugger for Mainframe: INTERTEST™ FOR BATCH",
+            "type": "intertest-batch",
+            "request": "launch",
+            "programName": [
+                "PROGRAMNM"
+            ],
+            "protsym": [
+                "PROTSYM"
+            ],
+            "host": "HOST",
+            "port": 0,
+            "interTestUserName": "USER",
+            "interTestSecure": true,
+            "ssh": {
+                "enabled": false
+            },
+            "convertedJCL": "CONV.JCL(RUNME)"
+        }
+    ]
+}
