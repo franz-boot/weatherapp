@@ -207,8 +207,8 @@ body {
 /* Cards */
 .card {
     background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 20px;
     padding: 20px;
@@ -483,6 +483,46 @@ body {
 }
 
 /* (total-snow replaced by total-snow-summary) */
+
+.forecast-meta {
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.45);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.meta-row {
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 12px;
+    margin-bottom: 6px;
+}
+
+.meta-row:last-child {
+    margin-bottom: 0;
+}
+
+.provider-chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 2px 8px;
+    margin: 3px 6px 0 0;
+    font-size: 11px;
+    border: 1px solid transparent;
+}
+
+.provider-chip.ok {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.45);
+    color: #a7f3d0;
+}
+
+.provider-chip.fail {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.45);
+    color: #fecaca;
+}
 
 /* Share */
 .share-section {

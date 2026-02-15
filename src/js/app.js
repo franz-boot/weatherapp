@@ -45,6 +45,9 @@ const translations = {
         maxSnow: 'Max za den',
         locationMap: 'Lokalita na mapě',
         openMap: 'Otevřít mapu',
+        dataSources: 'Zdroje dat',
+        forecastUpdated: 'Aktualizováno',
+        providerNoData: 'Nedostupné',
         days: ['Ne', 'Po', 'Út', 'St', 'Čt', 'Pá', 'So'],
         months: ['Led', 'Úno', 'Bře', 'Dub', 'Kvě', 'Čvn', 'Čvc', 'Srp', 'Zář', 'Říj', 'Lis', 'Pro']
     },
@@ -91,6 +94,9 @@ const translations = {
         maxSnow: 'Max pro Tag',
         locationMap: 'Standort auf der Karte',
         openMap: 'Karte öffnen',
+        dataSources: 'Datenquellen',
+        forecastUpdated: 'Aktualisiert',
+        providerNoData: 'Nicht verfügbar',
         days: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
         months: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez']
     }
@@ -103,6 +109,31 @@ let snowChart = null;
 let locationMap = null;
 let locationMarker = null;
 let autocompleteTimeout = null;
+let currentForecastMeta = null;
+const forecastUtils = (typeof ForecastUtils !== 'undefined') ? ForecastUtils : null;
+const normalizeDailyData = forecastUtils?.normalizeDailyData ?? ((d) => d);
+const computeConfidence = forecastUtils?.computeConfidence ?? ((dayIndex, precipProb = 0) => {
+    const dayConfidence = Math.max(0, 100 - (dayIndex * 5));
+    return Math.round((dayConfidence + (precipProb || 0)) / 2);
+});
+
+const WEATHER_PROVIDERS = [
+    {
+        id: 'openMeteoIcon',
+        label: 'Open-Meteo ICON-EU',
+        fetcher: (lat, lon) => fetchOpenMeteoForecast(lat, lon, 'icon_eu')
+    },
+    {
+        id: 'openMeteoGfs',
+        label: 'Open-Meteo GFS',
+        fetcher: (lat, lon) => fetchOpenMeteoForecast(lat, lon, 'gfs_seamless')
+    },
+    {
+        id: 'metNo',
+        label: 'MET Norway',
+        fetcher: (lat, lon) => fetchMetNoForecast(lat, lon)
+    }
+];
 
 // ========================================
 // EMAIL CONFIG
@@ -145,11 +176,99 @@ function setLanguage(lang) {
     if (currentForecast) {
         renderForecast(currentForecast);
         renderChart(currentForecast);
+        renderForecastMeta(currentForecastMeta);
     }
 }
 
 function t(key) {
     return translations[currentLang][key] || key;
+}
+
+function getFetchWithTimeout(url, options = {}, timeoutMs = 9000) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(timeoutId));
+}
+
+async function fetchOpenMeteoForecast(lat, lon, model) {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=snowfall_sum,precipitation_probability_max,temperature_2m_max,temperature_2m_min,weathercode&timezone=auto&forecast_days=14&models=${model}`;
+    const response = await getFetchWithTimeout(url);
+    if (!response.ok) throw new Error(`openmeteo:${response.status}`);
+
+    const data = await response.json();
+    if (!data.daily || !Array.isArray(data.daily.time) || data.daily.time.length === 0) {
+        throw new Error('openmeteo:invalid');
+    }
+
+    return { daily: data.daily };
+}
+
+function convertMetNoToDaily(timeseries) {
+    const byDate = new Map();
+
+    timeseries.forEach(entry => {
+        const dateKey = entry.time.slice(0, 10);
+        const details = entry.data?.instant?.details || {};
+        const next1h = entry.data?.next_1_hours?.details || {};
+
+        const temp = Number(details.air_temperature);
+        const precip = Number(next1h.precipitation_amount || 0);
+
+        if (!byDate.has(dateKey)) {
+            byDate.set(dateKey, {
+                tempMax: Number.isFinite(temp) ? temp : -Infinity,
+                tempMin: Number.isFinite(temp) ? temp : Infinity,
+                precipTotal: 0,
+                snowfallCm: 0,
+                hourlyCount: 0,
+                wetHours: 0
+            });
+        }
+
+        const day = byDate.get(dateKey);
+        if (Number.isFinite(temp)) {
+            day.tempMax = Math.max(day.tempMax, temp);
+            day.tempMin = Math.min(day.tempMin, temp);
+        }
+
+        if (Number.isFinite(precip) && precip > 0) {
+            day.precipTotal += precip;
+            day.wetHours += 1;
+            if (Number.isFinite(temp) && temp <= 1) {
+                day.snowfallCm += precip;
+            }
+        }
+
+        day.hourlyCount += 1;
+    });
+
+    const days = Array.from(byDate.entries()).slice(0, 14);
+    return {
+        time: days.map(([date]) => date),
+        snowfall_sum: days.map(([, d]) => parseFloat(d.snowfallCm.toFixed(1))),
+        precipitation_probability_max: days.map(([, d]) => {
+            if (!d.hourlyCount) return 0;
+            return Math.round((d.wetHours / d.hourlyCount) * 100);
+        }),
+        temperature_2m_max: days.map(([, d]) => Number.isFinite(d.tempMax) ? parseFloat(d.tempMax.toFixed(1)) : 0),
+        temperature_2m_min: days.map(([, d]) => Number.isFinite(d.tempMin) ? parseFloat(d.tempMin.toFixed(1)) : 0),
+        weathercode: days.map(([, d]) => d.snowfallCm > 0 ? 71 : (d.precipTotal > 0 ? 61 : 1))
+    };
+}
+
+async function fetchMetNoForecast(lat, lon) {
+    const url = `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}`;
+    const response = await getFetchWithTimeout(url, {
+        headers: { 'User-Agent': 'weatherapp/1.0 codex-agent' }
+    });
+
+    if (!response.ok) throw new Error(`metno:${response.status}`);
+    const data = await response.json();
+    const timeseries = data?.properties?.timeseries;
+    if (!Array.isArray(timeseries) || timeseries.length === 0) throw new Error('metno:invalid');
+
+    return { daily: convertMetNoToDaily(timeseries) };
 }
 
 // ========================================
@@ -449,27 +568,116 @@ function useMyLocation() {
     );
 }
 
+async function fetchProviderForecast(provider, lat, lon) {
+    const data = await provider.fetcher(lat, lon);
+    const daily = normalizeDailyData(data.daily);
+    if (!daily.time || daily.time.length === 0) {
+        throw new Error(`${provider.id}:invalid`);
+    }
+
+    return {
+        provider: provider.label,
+        generatedAt: data.generationtime_ms ?? null,
+        daily
+    };
+}
+
+function averageDailyDatasets(primaryDaily, datasets) {
+    const baseDays = Math.min(14, primaryDaily.time.length);
+    const numericFields = ['snowfall_sum', 'precipitation_probability_max', 'temperature_2m_max', 'temperature_2m_min'];
+
+    const averaged = {
+        time: primaryDaily.time.slice(0, baseDays),
+        weathercode: primaryDaily.weathercode.slice(0, baseDays)
+    };
+
+    numericFields.forEach(field => {
+        averaged[field] = [];
+        for (let i = 0; i < baseDays; i++) {
+            let sum = 0;
+            let count = 0;
+
+            datasets.forEach(dataset => {
+                const values = dataset.daily[field];
+                const value = values?.[i];
+                if (typeof value === 'number' && Number.isFinite(value)) {
+                    sum += value;
+                    count += 1;
+                }
+            });
+
+            averaged[field][i] = count > 0 ? parseFloat((sum / count).toFixed(1)) : 0;
+        }
+    });
+
+    return averaged;
+}
+
+function renderForecastMeta(meta) {
+    const metaEl = document.getElementById('forecastMeta');
+    if (!meta || !meta.providers || meta.providers.length === 0) {
+        metaEl.classList.add('hidden');
+        metaEl.innerHTML = '';
+        return;
+    }
+
+    const updatedAt = new Date().toLocaleTimeString(currentLang === 'cs' ? 'cs-CZ' : 'de-DE', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    const providersHtml = meta.providers.map(provider => {
+        const statusClass = provider.status === 'ok' ? 'ok' : 'fail';
+        const statusLabel = provider.status === 'ok' ? 'OK' : t('providerNoData');
+        return `<span class="provider-chip ${statusClass}" title="${provider.label}">${provider.label}: ${statusLabel}</span>`;
+    }).join('');
+
+    metaEl.innerHTML = `
+        <div class="meta-row"><strong>${t('dataSources')}:</strong> ${providersHtml}</div>
+        <div class="meta-row"><strong>${t('forecastUpdated')}:</strong> ${updatedAt}</div>
+    `;
+    metaEl.classList.remove('hidden');
+}
+
 async function fetchForecast(lat, lon) {
     document.getElementById('forecastCard').classList.remove('hidden');
     document.getElementById('alertCard').classList.add('hidden');
     document.getElementById('chartContainer').classList.add('hidden');
     document.getElementById('shareSection').classList.add('hidden');
+    document.getElementById('forecastMeta').classList.add('hidden');
     document.getElementById('forecastContent').innerHTML = `<div class="loading">${t('loading')}</div>`;
 
-    try {
-        const response = await fetch(
-            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=snowfall_sum,precipitation_probability_max,temperature_2m_max,temperature_2m_min,weathercode&timezone=auto&forecast_days=14`
-        );
-        const data = await response.json();
+    const settled = await Promise.allSettled(
+        WEATHER_PROVIDERS.map(provider => fetchProviderForecast(provider, lat, lon))
+    );
 
-        currentForecast = data.daily;
+    const successful = settled
+        .filter(result => result.status === 'fulfilled')
+        .map(result => result.value);
+
+    const providerStates = settled.map((result, index) => ({
+        label: WEATHER_PROVIDERS[index].label,
+        status: result.status === 'fulfilled' ? 'ok' : 'fail'
+    }));
+
+    if (successful.length === 0) {
+        showError(t('fetchError'));
+        return;
+    }
+
+    try {
+        const mergedDaily = averageDailyDatasets(successful[0].daily, successful);
+        currentForecast = mergedDaily;
+        currentForecastMeta = { providers: providerStates };
+
         document.getElementById('locationName').textContent = currentLocation.name;
         document.getElementById('currentLocation').classList.add('active');
 
         updateLocationMap(lat, lon, currentLocation.name);
 
-        renderForecast(data.daily);
-        renderChart(data.daily);
+        renderForecast(mergedDaily);
+        renderChart(mergedDaily);
+        renderForecastMeta(currentForecastMeta);
 
         document.getElementById('alertCard').classList.remove('hidden');
         document.getElementById('shareSection').classList.remove('hidden');
@@ -496,8 +704,7 @@ function renderForecast(daily) {
         const tempMax = Math.round(daily.temperature_2m_max[i]);
         const tempMin = Math.round(daily.temperature_2m_min[i]);
         const precipProb = daily.precipitation_probability_max[i] || 0;
-        const dayConfidence = Math.max(0, 100 - (i * 5));
-        const confidence = Math.round((dayConfidence + precipProb) / 2);
+        const confidence = computeConfidence(i, precipProb);
 
         let probClass = confidence >= 75 ? 'high' : confidence >= 50 ? 'medium' : 'low';
         let snowClass = '';
@@ -550,8 +757,7 @@ function renderChart(daily) {
 
         const snow = daily.snowfall_sum[i] || 0;
         const precipProb = daily.precipitation_probability_max[i] || 0;
-        const dayConfidence = Math.max(0, 100 - (i * 5));
-        const confidence = Math.round((dayConfidence + precipProb) / 2);
+        const confidence = computeConfidence(i, precipProb);
 
         dailySnow.push(snow);
         total += snow;
@@ -690,7 +896,7 @@ function getShareText() {
             const date = new Date(currentForecast.time[i]);
             const dayName = i === 0 ? t('today') : i === 1 ? t('tomorrow') : `${days[date.getDay()]} ${date.getDate()}`;
             const precipProb = currentForecast.precipitation_probability_max[i] || 0;
-            const confidence = Math.round((Math.max(0, 100 - (i * 5)) + precipProb) / 2);
+            const confidence = computeConfidence(i, precipProb);
             snowDays.push(`${dayName}: ${snow.toFixed(1)}cm (${confidence}%)`);
         }
     }
@@ -744,7 +950,7 @@ function checkAlerts() {
             const date = new Date(currentForecast.time[i]);
             const dayName = i === 0 ? t('today') : i === 1 ? t('tomorrow') : `${days[date.getDay()]} ${date.getDate()}`;
             const precipProb = currentForecast.precipitation_probability_max[i] || 0;
-            const confidence = Math.round((Math.max(0, 100 - (i * 5)) + precipProb) / 2);
+            const confidence = computeConfidence(i, precipProb);
             alerts.push(`${dayName}: ${snow.toFixed(1)} cm (${confidence}%)`);
         }
     }
