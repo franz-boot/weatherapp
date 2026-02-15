@@ -1,0 +1,37 @@
+test/computeConfidence.test.js
+  488f9d0149bcffef 1-11
+package.json
+  488f9d0149bcffef 9
+src/css/style.css
+  488f9d0149bcffef 211,487-525
+index.html
+  488f9d0149bcffef 7,71,159
+test/normalizeDailyData.test.js
+  488f9d0149bcffef 1-20
+src/js/forecast-utils.js
+  488f9d0149bcffef 1-39
+src/js/app.js
+  488f9d0149bcffef 48-50,97-99,112-136,188-271,579-639,647,655,658-667,669-671,678-680
+test/run-tests.js
+  488f9d0149bcffef 1-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.3",
+  "base_commit_sha": "b23ab5435ed142e04b0fb86cb3713d1c03c5ac95",
+  "prompts": {
+    "488f9d0149bcffef": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019c5560-4c96-7a60-bd8f-65218eeb1153",
+        "model": "gpt-5.1-codex-max"
+      },
+      "human_author": "franz-boot <122613922+franz-boot@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 362,
+      "total_deletions": 22,
+      "accepted_lines": 361,
+      "overriden_lines": 0
+    }
+  }
+}
