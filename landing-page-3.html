@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rezervace - Penzion Krkonoše</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg,
+                #f5f0ff 0%,
+                #fff0f5 25%,
+                #f0fff8 50%,
+                #fffcf0 75%,
+                #f0f8ff 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 60px 20px 40px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            transform: translateX(-5px);
+            color: #764ba2;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #666;
+            font-weight: 300;
+            margin-bottom: 40px;
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 50px 0;
+        }
+
+        /* Form Section */
+        .form-card {
+            background: rgba(255, 255, 255, 0.93);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            padding: 50px;
+            box-shadow: 0 6px 28px rgba(0, 0, 0, 0.09);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(255, 105, 180, 0.1));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+
+        .form-card:hover::before {
+            opacity: 1;
+        }
+
+        .form-card:hover {
+            transform: translateY(-8px);
+            box-shadow:
+                0 25px 70px rgba(102, 126, 234, 0.5),
+                0 35px 90px rgba(255, 105, 180, 0.4),
+                0 0 50px rgba(0, 255, 255, 0.3);
+        }
+
+        .form-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-title {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #444;
+            font-size: 0.95rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-button:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                0 10px 35px rgba(102, 126, 234, 0.6),
+                0 0 30px rgba(255, 0, 255, 0.5);
+        }
+
+        /* Pricing Cards */
+        .pricing-section {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .price-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 5px 22px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .price-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.12), rgba(0, 255, 127, 0.12));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+
+        .price-card:hover::before {
+            opacity: 1;
+        }
+
+        .price-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow:
+                0 22px 65px rgba(138, 43, 226, 0.5),
+                0 30px 80px rgba(0, 255, 127, 0.4),
+                0 0 45px rgba(255, 215, 0, 0.3);
+        }
+
+        .price-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .price-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .room-type {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .price {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .price-features {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .price-features li {
+            padding: 8px 0;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .price-features li::before {
+            content: '✓ ';
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        /* Contact Info */
+        .contact-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            padding: 45px;
+            box-shadow: 0 6px 28px rgba(0, 0, 0, 0.09);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin: 40px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 69, 0, 0.1), rgba(255, 215, 0, 0.1));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+
+        .contact-card:hover::before {
+            opacity: 1;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-10px);
+            box-shadow:
+                0 28px 75px rgba(255, 69, 0, 0.5),
+                0 38px 95px rgba(255, 215, 0, 0.4),
+                0 0 55px rgba(0, 255, 255, 0.35);
+        }
+
+        .contact-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-title {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            color: #1a1a1a;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .contact-item {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .contact-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .contact-label {
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .contact-value {
+            color: #667eea;
+            font-size: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .form-card, .contact-card {
+                padding: 35px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="landing-page-1.html" class="back-link">← Zpět na hlavní stránku</a>
+            <h1>📅 Rezervace & Kontakt</h1>
+            <p class="subtitle">Rezervujte si svůj pobyt v horském ráji</p>
+        </header>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Reservation Form -->
+            <div class="form-card">
+                <div class="form-content">
+                    <h2 class="form-title">Rezervační Formulář</h2>
+                    <form id="reservationForm">
+                        <div class="form-group">
+                            <label for="name">Jméno a příjmení *</label>
+                            <input type="text" id="name" name="name" required placeholder="Jan Novák">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">E-mail *</label>
+                            <input type="email" id="email" name="email" required placeholder="jan@example.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Telefon *</label>
+                            <input type="tel" id="phone" name="phone" required placeholder="+420 123 456 789">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="checkin">Příjezd *</label>
+                            <input type="date" id="checkin" name="checkin" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="checkout">Odjezd *</label>
+                            <input type="date" id="checkout" name="checkout" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="room">Typ pokoje *</label>
+                            <select id="room" name="room" required>
+                                <option value="">Vyberte pokoj</option>
+                                <option value="standard">Standardní pokoj (1.200 Kč/noc)</option>
+                                <option value="comfort">Komfortní pokoj (1.800 Kč/noc)</option>
+                                <option value="suite">Apartmá (2.500 Kč/noc)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="guests">Počet hostů *</label>
+                            <select id="guests" name="guests" required>
+                                <option value="1">1 host</option>
+                                <option value="2">2 hosté</option>
+                                <option value="3">3 hosté</option>
+                                <option value="4">4 hosté</option>
+                                <option value="5+">5+ hostů</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Poznámka (volitelné)</label>
+                            <textarea id="message" name="message" placeholder="Např. požadavky na stravu, speciální přání..."></textarea>
+                        </div>
+
+                        <button type="submit" class="submit-button">Odeslat Rezervaci</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Pricing Section -->
+            <div class="pricing-section">
+                <div class="price-card">
+                    <div class="price-content">
+                        <div class="price-header">
+                            <span class="room-type">🛏️ Standardní</span>
+                            <span class="price">1.200 Kč</span>
+                        </div>
+                        <ul class="price-features">
+                            <li>Pokoj pro 2 osoby</li>
+                            <li>Vlastní koupelna</li>
+                            <li>Wi-Fi a TV</li>
+                            <li>Snídaně formou bufetu</li>
+                            <li>Parkování zdarma</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="price-card">
+                    <div class="price-content">
+                        <div class="price-header">
+                            <span class="room-type">🏨 Komfortní</span>
+                            <span class="price">1.800 Kč</span>
+                        </div>
+                        <ul class="price-features">
+                            <li>Pokoj pro 2-3 osoby</li>
+                            <li>Větší pokoj, vlastní balkon</li>
+                            <li>Minibar a kávovar</li>
+                            <li>Snídaně a večeře</li>
+                            <li>Vstup do wellness zdarma</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="price-card">
+                    <div class="price-content">
+                        <div class="price-header">
+                            <span class="room-type">⭐ Apartmá</span>
+                            <span class="price">2.500 Kč</span>
+                        </div>
+                        <ul class="price-features">
+                            <li>Pro až 4 osoby</li>
+                            <li>Obývací pokoj + ložnice</li>
+                            <li>Panoramatický výhled</li>
+                            <li>Plná penze</li>
+                            <li>Privátní wellness (2 hod/den)</li>
+                            <li>Skipas se slevou 15%</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="contact-card">
+            <div class="contact-content">
+                <h2 class="contact-title">Kontaktujte Nás</h2>
+                <div class="contact-grid">
+                    <div class="contact-item">
+                        <div class="contact-icon">📞</div>
+                        <div class="contact-label">Telefon</div>
+                        <div class="contact-value">+420 123 456 789</div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">📧</div>
+                        <div class="contact-label">E-mail</div>
+                        <div class="contact-value">info@penzion-krkonose.cz</div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">📍</div>
+                        <div class="contact-label">Adresa</div>
+                        <div class="contact-value">Horská 123, 543 01 Špindlerův Mlýn</div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">🕐</div>
+                        <div class="contact-label">Recepce 24/7</div>
+                        <div class="contact-value">Check-in: 14:00 | Check-out: 10:00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2026 Penzion Krkonoše | <a href="landing-page-1.html" style="color: #667eea; text-decoration: none;">Domů</a> | <a href="landing-page-2.html" style="color: #667eea; text-decoration: none;">Aktivity</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // Simple form validation and submission
+        document.getElementById('reservationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+
+            // Here you would normally send data to a server
+            console.log('Reservation data:', data);
+
+            alert('Děkujeme za Vaši rezervaci!\n\nBrzy Vás budeme kontaktovat pro potvrzení.\n\nTěšíme se na Vaši návštěvu! ❄️');
+
+            // Optional: Reset form
+            this.reset();
+        });
+
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('checkin').setAttribute('min', today);
+
+        // Update checkout minimum when checkin changes
+        document.getElementById('checkin').addEventListener('change', function() {
+            const checkinDate = new Date(this.value);
+            checkinDate.setDate(checkinDate.getDate() + 1);
+            const minCheckout = checkinDate.toISOString().split('T')[0];
+            document.getElementById('checkout').setAttribute('min', minCheckout);
+        });
+    </script>
+</body>
+</html>

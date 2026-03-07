@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zimní Aktivity - Penzion Krkonoše</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg,
+                #e0f0ff 0%,
+                #ffe0f7 25%,
+                #e0fff4 50%,
+                #fff0e0 75%,
+                #f0e0ff 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 60px 20px 40px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            transform: translateX(-5px);
+            color: #764ba2;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #666;
+            font-weight: 300;
+            margin-bottom: 40px;
+        }
+
+        /* Activity Cards */
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 35px;
+            margin: 50px 0;
+        }
+
+        .activity-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            padding: 45px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .activity-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.12), rgba(118, 75, 162, 0.12));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+
+        .activity-card:hover::before {
+            opacity: 1;
+        }
+
+        .activity-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow:
+                0 25px 70px rgba(102, 126, 234, 0.5),
+                0 35px 90px rgba(255, 0, 255, 0.4),
+                0 0 50px rgba(0, 255, 255, 0.3);
+        }
+
+        .activity-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .activity-icon {
+            font-size: 4rem;
+            margin-bottom: 25px;
+            display: block;
+        }
+
+        .activity-card h3 {
+            font-size: 2rem;
+            margin-bottom: 18px;
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+
+        .activity-card p {
+            font-size: 1.05rem;
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .activity-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .detail-badge {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #667eea;
+        }
+
+        /* Hero Banner */
+        .hero-banner {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            padding: 70px;
+            box-shadow: 0 8px 35px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin: 60px 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 191, 255, 0.12), rgba(138, 43, 226, 0.12));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .hero-banner:hover::before {
+            opacity: 1;
+        }
+
+        .hero-banner:hover {
+            transform: translateY(-12px);
+            box-shadow:
+                0 30px 80px rgba(0, 191, 255, 0.5),
+                0 40px 100px rgba(138, 43, 226, 0.4),
+                0 0 60px rgba(255, 215, 0, 0.35);
+        }
+
+        .banner-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .banner-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: #1a1a1a;
+        }
+
+        .banner-text {
+            font-size: 1.25rem;
+            color: #666;
+            margin-bottom: 35px;
+            font-weight: 300;
+            line-height: 1.7;
+        }
+
+        /* Info Section */
+        .info-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .info-box {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(10px);
+            padding: 35px;
+            border-radius: 24px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
+        }
+
+        .info-box:hover {
+            transform: translateY(-8px) scale(1.04);
+            box-shadow:
+                0 20px 60px rgba(255, 20, 147, 0.45),
+                0 25px 70px rgba(0, 255, 255, 0.35),
+                0 0 40px rgba(255, 255, 0, 0.25);
+        }
+
+        .info-number {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .info-label {
+            font-size: 1.1rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        /* CTA Button */
+        .cta-button {
+            display: inline-block;
+            padding: 20px 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.15rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-4px);
+            box-shadow:
+                0 12px 35px rgba(102, 126, 234, 0.6),
+                0 0 35px rgba(255, 0, 255, 0.5);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-banner, .activity-card {
+                padding: 40px 30px;
+            }
+
+            .activity-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="landing-page-1.html" class="back-link">← Zpět na hlavní stránku</a>
+            <h1>❄️ Zimní Aktivity</h1>
+            <p class="subtitle">Objevte nekonečné možnosti zimní zábavy v Krkonoších</p>
+        </header>
+
+        <!-- Hero Banner -->
+        <div class="hero-banner">
+            <div class="banner-content">
+                <h2 class="banner-title">Adrenalin i Relaxace</h2>
+                <p class="banner-text">
+                    Ať už jste zkušený lyžař nebo začátečník, v Krkonoších si každý přijde na své.<br>
+                    Ideální sněhové podmínky od prosince do března!
+                </p>
+                <a href="landing-page-3.html" class="cta-button">Rezervovat Nyní</a>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="info-section">
+            <div class="info-box">
+                <div class="info-number">15+</div>
+                <div class="info-label">Lyžařských Tratí</div>
+            </div>
+
+            <div class="info-box">
+                <div class="info-number">5 min</div>
+                <div class="info-label">Do Areálu</div>
+            </div>
+
+            <div class="info-box">
+                <div class="info-number">150 km</div>
+                <div class="info-label">Běžeckých Tratí</div>
+            </div>
+
+            <div class="info-box">
+                <div class="info-number">100%</div>
+                <div class="info-label">Zimní Zábava</div>
+            </div>
+        </div>
+
+        <!-- Activity Cards -->
+        <div class="activity-grid">
+            <div class="activity-card">
+                <div class="activity-content">
+                    <span class="activity-icon">⛷️</span>
+                    <h3>Sjezdové Lyžování</h3>
+                    <p>
+                        Moderní lyžařské areály s upravenými sjezdovkami pro všechny úrovně.
+                        Večerní lyžování, snowparky a profesionální lyžařská škola.
+                    </p>
+                    <div class="activity-details">
+                        <span class="detail-badge">Pro začátečníky</span>
+                        <span class="detail-badge">Pro pokročilé</span>
+                        <span class="detail-badge">Půjčovna vybavení</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="activity-card">
+                <div class="activity-content">
+                    <span class="activity-icon">🏂</span>
+                    <h3>Snowboarding</h3>
+                    <p>
+                        Snowparky s překážkami, halfpipe a freestyle zóny. Ideální pro
+                        trickování i klidnou jízdu. Instruktor na požádání.
+                    </p>
+                    <div class="activity-details">
+                        <span class="detail-badge">Snowpark</span>
+                        <span class="detail-badge">Halfpipe</span>
+                        <span class="detail-badge">Freestyle</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="activity-card">
+                <div class="activity-content">
+                    <span class="activity-icon">🎿</span>
+                    <h3>Běžecké Lyžování</h3>
+                    <p>
+                        Více než 150 km značených běžeckých tratí s nádherným výhledem
+                        na hory. Klasika i skating, pro rekreaci i trénink.
+                    </p>
+                    <div class="activity-details">
+                        <span class="detail-badge">150+ km tratí</span>
+                        <span class="detail-badge">Upravované denně</span>
+                        <span class="detail-badge">Krásné výhledy</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="activity-card">
+                <div class="activity-content">
+                    <span class="activity-icon">🛷</span>
+                    <h3>Sáňkování</h3>
+                    <p>
+                        Zábava pro celou rodinu! Bezpečné sáňkařské dráhy různé obtížnosti.
+                        Půjčovna saní a bobů přímo v penzionu.
+                    </p>
+                    <div class="activity-details">
+                        <span class="detail-badge">Pro rodiny</span>
+                        <span class="detail-badge">Bezpečné dráhy</span>
+                        <span class="detail-badge">Půjčovna zdarma</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="activity-card">
+                <div class="activity-content">
+                    <span class="activity-icon">🥾</span>
+                    <h3>Zimní Turistika</h3>
+                    <p>
+                        Prozkoumejte zasněženou krásu Krkonoš pěšky. Značené turistické
+                        stezky, sněžnice a průvodce, kteří znají každý kout hor.
+                    </p>
+                    <div class="activity-details">
+                        <span class="detail-badge">Sněžnice</span>
+                        <span class="detail-badge">Průvodci</span>
+                        <span class="detail-badge">Mapy zdarma</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="activity-card">
+                <div class="activity-content">
+                    <span class="activity-icon">🧖</span>
+                    <h3>Wellness & Relax</h3>
+                    <p>
+                        Po náročném dni na svahu si odpočiňte v naší sauně, vířivce
+                        nebo relaxační zóně. Masáže na objednávku.
+                    </p>
+                    <div class="activity-details">
+                        <span class="detail-badge">Sauna</span>
+                        <span class="detail-badge">Vířivka</span>
+                        <span class="detail-badge">Masáže</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div style="text-align: center; margin: 80px 0 40px;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 30px; color: #1a1a1a;">
+                Připraveni na dobrodružství?
+            </h2>
+            <a href="landing-page-3.html" class="cta-button">Rezervovat Pobyt</a>
+        </div>
+
+        <footer>
+            <p>© 2026 Penzion Krkonoše | Kontakt: info@penzion-krkonose.cz | Tel: +420 123 456 789</p>
+        </footer>
+    </div>
+</body>
+</html>
